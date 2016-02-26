@@ -1,0 +1,125 @@
+<!doctype html>
+<html class="no-js" lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AriaApp</title>
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- build:css styles/vendor.css -->
+    <!-- bower:css -->
+    <!-- endbower -->
+    <!-- endbuild -->
+
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    <style type="text/css">
+    .speed{padding: 6px 12px;}
+    </style>
+    
+    <!-- build:js scripts/vendor/modernizr.js -->
+    <script src="/bower_components/modernizr/modernizr.js"></script>
+    <!-- endbuild -->
+
+
+  </head>
+  <body id="body">
+    <!--[if lt IE 10]>
+      <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    
+    <div class="container">
+	      <div class="header">
+			<ul class="nav nav-pills pull-right">
+			  <li><a href="#" v-on:click.stop.prevent="aria2.purgeDownloadResult(callback)" >Purge Download Result</a></li>
+			  <li><a href="#">About</a></li>
+			  <li><a href="#">Contact</a></li>
+			</ul>
+			<h3 class="text-muted">AriaApp</h3>
+	      </div>
+     
+		<div class="form-group">
+			<label class="sr-only" for="">label</label>
+			<input v-model="urlfield" type="email" v-on:keyup.enter="aria2.addUri([urlfield], callback)" class="form-control" id="" placeholder="Downlad something!">
+		</div>
+		<div style=" border: 1px solid #eee; padding:22px; border-radius: 10px;"  v-for="d in all">	
+				<h4 class="" v-if="d.bittorrent != null" >{{ d.bittorrent.info.name }}</h4>
+				<h4 class="" v-else="d.files.path" >{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
+				<div class="progress">
+					<div class="progress-bar progress-bar-striped" 
+					v-bind:class="{
+					 'progress-bar-success': d.status == 'complete', 
+					 'progress-bar-warning': d.status == 'waiting',
+					 'progress-bar-danger': d.status == 'error' 
+					 }"
+					role="progressbar" 
+					:aria-valuenow="d.completedLength" 
+					aria-valuemin="0" 
+					:aria-valuemax="d.totalLength" 
+					:style="{ width: (d.completedLength / d.totalLength * 100) +'%'}">
+						{{(d.completedLength / d.totalLength * 100) +'%'}}
+					</div>
+				</div>	
+				<span class="speed text-success pull-left">{{ byteCount(d.downloadSpeed, 1024) }}/s</span>
+				<span class="speed text-danger pull-left">{{byteCount(d.uploadSpeed, 1024) }}/s</span>
+				<div class="btn-group" role="group" aria-label="...">
+				  	<button type="button" class="btn btn-default btn-sm" 	v-on:click.stop.prevent="aria2.removeDownloadResult(d.gid, callback);" >Remove</button>
+				  	<button type="button" class="btn btn-danger btn-sm" 	v-on:click.stop.prevent="aria2.remove(d.gid, callback);" >Delete</button>
+				  	<button type="button" class="btn btn-primary btn-sm"   	v-on:click.stop.prevent="aria2.pause(d.gid, callback );">Pause</button>
+				  	<button type="button" class="btn btn-success btn-sm"   	v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">Start</button>
+				</div>
+		</div>	
+
+
+
+		<div class="footer">
+			<p>made with ♥ by Timmy</p>
+		</div>
+
+    </div> <!-- .container -->
+    
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+    <script>
+      (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='https://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+
+    <!-- build:js scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+    <script src="/bower_components/vue/dist/vue.js"></script>
+    <script src="/bower_components/aria2/aria2.js"></script>
+    <!-- endbower -->
+    <script src="scripts/desktop-notify.min.js"></script>
+    <!-- endbuild -->
+    
+    <!-- build:js scripts/plugins.js -->
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/modal.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/transition.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/button.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/popover.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/carousel.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
+    <!-- endbuild -->
+    
+    <!-- build:js scripts/main.js -->
+    <script src="scripts/main.js"></script>
+    <!-- endbuild -->
+    <script type="text/javascript">
+    </script>
+  </body>
+</html>
