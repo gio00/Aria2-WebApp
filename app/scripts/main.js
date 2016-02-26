@@ -14,6 +14,7 @@ var v = new Vue({
                     var permissionLevel = notify.permissionLevel();
                     var permissionsGranted = (permissionLevel === notify.PERMISSION_GRANTED);
                 });
+
             },
             computed:{
                 aria2:function(){
@@ -56,10 +57,11 @@ var v = new Vue({
                             self.$set('stopped', res)
                         });
                         self.aria2.onDownloadComplete = function(gid){
-                            notify.createNotification(gid, function(){
-                                body: "Download Complete"
-                            })
-                        }
+                            notify.createNotification(gid, {
+                                body: "Download Complete",
+                                icon: "images/icon.png"
+                            });
+                        };
                     });
 
                 }

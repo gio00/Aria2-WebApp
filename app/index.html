@@ -35,33 +35,41 @@
     <div class="container">
 	      <div class="header">
 			<ul class="nav nav-pills pull-right">
-			  <li><a href="#" v-on:click.stop.prevent="aria2.purgeDownloadResult(callback)" >Purge Download Result</a></li>
-			  <li><a href="#">About</a></li>
-			  <li><a href="#">Contact</a></li>
+              <li><a href="#" v-on:click.stop.prevent="aria2.purgeDownloadResult(callback)" >Remove completed</a></li>
+              <li><a href="#" v-on:click.stop.prevent="aria2.pauseAll(callback)" >Pause all</a></li>
+			  <li><a href="#" v-on:click.stop.prevent="aria2.unpauseAll(callback)" >Start all</a></li>
 			</ul>
 			<h3 class="text-muted">AriaApp</h3>
 	      </div>
      
 		<div class="form-group">
 			<label class="sr-only" for="">label</label>
-			<input v-model="urlfield" type="email" v-on:keyup.enter="aria2.addUri([urlfield], callback)" class="form-control" id="" placeholder="Downlad something!">
+			<input v-model="urlfield" 
+            type="email" 
+            v-on:keyup.enter="aria2.addUri([urlfield], callback)" 
+            class="form-control" id="" 
+            placeholder="Downlad something!">
 		</div>
 		<div style=" border: 1px solid #eee; padding:22px; border-radius: 10px;"  v-for="d in all">	
-				<h4 class="" v-if="d.bittorrent != null" >{{ d.bittorrent.info.name }}</h4>
-				<h4 class="" v-else="d.files.path" >{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
+				<h4 class="" v-if="typeof d.bittorrent != 'undefined'" >{{ d.bittorrent.info.name }}</h4>
+				<h4 class="" v-else >{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
 				<div class="progress">
 					<div class="progress-bar progress-bar-striped" 
 					v-bind:class="{
 					 'progress-bar-success': d.status == 'complete', 
-					 'progress-bar-warning': d.status == 'waiting',
-					 'progress-bar-danger': d.status == 'error' 
+                     'progress-bar-primary': d.status != 'active',
+                     'progress-bar-danger': d.status == 'error',
+                     'progress-bar-warning': d.status == 'paused',
+					 'progress-bar-warning': d.status == 'removed',
+                     'active': d.status == 'active',
+                     'active': (d.totalLength == 0 ) & d.status != 'removed'
 					 }"
 					role="progressbar" 
-					:aria-valuenow="d.completedLength" 
+					:aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" 
 					aria-valuemin="0" 
-					:aria-valuemax="d.totalLength" 
-					:style="{ width: (d.completedLength / d.totalLength * 100) +'%'}">
-						{{(d.completedLength / d.totalLength * 100) +'%'}}
+					:aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" 
+					:style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
+						{{ ((d.totalLength == 0 ) ? '' : (d.completedLength / d.totalLength * 100) + '%') + d.status}}
 					</div>
 				</div>	
 				<span class="speed text-success pull-left">{{ byteCount(d.downloadSpeed, 1024) }}/s</span>
@@ -73,7 +81,7 @@
 				  	<button type="button" class="btn btn-success btn-sm"   	v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">Start</button>
 				</div>
 		</div>	
-
+        <pre>{{ $data | json }}</pre>
 
 
 		<div class="footer">
