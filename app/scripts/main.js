@@ -2,31 +2,26 @@ var options = { 'host': 'localhost', 'port': 6800, 'secure': false }
 var aria2 = new Aria2(options)
 var isOpen = false
 aria2.open(function() {
-    isOpen = true
-});
+isOpen = true
+
 Vue.config.debug = true;
 var v = new Vue({
     el: '#body',
     data: {
         urlfield: '',
+        toggle: false,
+        connected: false,
         active: [],
         waiting: [],
         stopped: []
     },
     ready: function() {
-        this.initAria()
         setInterval(this.initAria, 1000);
-        notify.requestPermission(function() {
-            var permissionLevel = notify.permissionLevel();
-            var permissionsGranted = (permissionLevel === notify.PERMISSION_GRANTED);
+        this.setupNotifications();
+        var self = this;
+        aria2.getGlobalOption(function(err,res){
+            self.$set('options', res)
         });
-        aria2.onDownloadStart = function(gid) {
-            notify.createNotification(gid, {
-                body: "Download Complete",
-                icon: "images/icon.png"
-            });
-        }
-
     },
     computed: {
         aria2: function() {
@@ -37,21 +32,44 @@ var v = new Vue({
         }
     },
     methods: {
-        notify: function(gid) {
-            aria2.getFiles(gid, function(err, res){
-                if(err){
-                    alert(err);
-                }else{
-                    console.log("No errors")
-                }
+        setupNotifications: function() {
+            notify.requestPermission(function() {
+                var permissionLevel = notify.permissionLevel();
+                var permissionsGranted = (permissionLevel === notify.PERMISSION_GRANTED);
+            });
+            var self = this;
+            aria2.onDownloadComplete = function(gid) {
+                self.notify(gid["gid"], 'Download Complete')
+            };
+            aria2.onDownloadStart = function(gid) {
+                self.notify(gid["gid"], 'Download Started')
+            }
+        },
+        notify: function(gid, message) {
+            aria2.getFiles(gid, function(err, res) {
+                this.notifyError(err)
                 notify.createNotification((res[0].path.split('/'))[res[0].path.split('/').length - 1], {
-                    body: "Download Complete",
+                    body: message,
                     icon: "images/icon.png"
                 });
             });
         },
+        notifyError: function(err) {
+            notify.createNotification("Errore", {
+                body: err["message"],
+                icon: "images/icon.png"
+            });
+        },
+        optCallback: function(err,res){
+            $('#alertspace').append('<div id="alert" class="alert alert-success"><a class="close" data-dismiss="alert">×</a><span>'+res+'</span></div>')
+            setTimeout( function(){ 
+              $('#alert').remove();
+            }  , 4000 );
+        },
         callback: function(err, res) {
-            console.log(err)
+            if (err) {
+                this.notifyError(err)
+            }
             console.log(res)
         },
         byteCount: function(bytes, unit) {
@@ -65,24 +83,34 @@ var v = new Vue({
             var self = this;
             if (isOpen) {
                 aria2.tellActive(function(err, res) {
-                    console.log(res)
-                    console.log(err)
+                    if (err) {
+                        self.notifyError(err)
+                        self.connected = false
+                    } else {
+                        self.connected = true
+                    }
                     self.$set('active', res)
                 });
                 aria2.tellWaiting(0, 1000, function(err, res) {
-                    console.log(res)
-                    console.log(err)
+                    if (err) {
+                        self.notifyError(err)
+                        self.connected = false
+                    } else {
+                        self.connected = true
+                    }
                     self.$set('waiting', res)
                 });
                 aria2.tellStopped(0, 1000, function(err, res) {
-                    console.log(res)
-                    console.log(err)
+                    if (err) {
+                        self.notifyError(err)
+                        self.connected = false
+                    } else {
+                        self.connected = true
+                    }
                     self.$set('stopped', res)
                 });
-                aria2.onDownloadComplete = function(gid) {
-                    self.notify(gid["gid"])
-                };
             }
         }
     }
 })
+});
