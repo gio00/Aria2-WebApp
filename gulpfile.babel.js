@@ -12,6 +12,11 @@ const reload = browserSync.reload;
 import realFavicon from 'gulp-real-favicon';
 import fs from 'fs';
 
+import taskListing from 'gulp-task-listing';
+// Add a task to render the output 
+gulp.task('help', taskListing);
+
+
 // File where the favicon markups are stored
 var FAVICON_DATA_FILE = 'app/favicons/manifest.json';
 
