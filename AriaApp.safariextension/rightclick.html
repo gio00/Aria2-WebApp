@@ -1,0 +1,43 @@
+!DOCTYPE html>
+<html>
+<head>
+	<title></title> 
+	<script type="text/javascript" src="jquery-1.11.1.js"></script>
+	<script type="text/javascript">
+
+
+
+		safari.application.addEventListener("message", responseMessage, false);	
+		function responseMessage(message){
+			if (message.name === 'aria2c'){
+				var json = "";
+				var x = btoa('[[ "' + message.message + '"]]');
+				var xmlhttp = new XMLHttpRequest();
+				xmlhttp.open('GET', 'http://127.0.0.1:6800/jsonrpc?method=aria2.addUri&id=s&params=' + x, true);
+				xmlhttp.onreadystatechange = function() {
+				    if (xmlhttp.readyState == 4) {
+				        if(xmlhttp.status == 200) {
+				            var obj = JSON.parse(xmlhttp.responseText);
+				         }
+				    }
+				};
+				xmlhttp.send(null);
+			}
+		}
+		
+		safari.application.addEventListener("command", performCommand, false);
+		function performCommand(event) {
+		    if (event.command === "aria2c") {
+	 		safari.application.activeBrowserWindow.activeTab.page.dispatchMessage("aria2c", "");
+	    		console.log('performCommand');
+		    }
+		}
+
+
+
+		</script>
+</head>
+<body>
+
+</body>
+</html>
