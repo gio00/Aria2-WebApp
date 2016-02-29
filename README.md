@@ -2,11 +2,14 @@
 
 Simple web gui of aria2
 
+First
 ```
-npm install
+git clone https://github.com/gio00/AriaApp.git
 ```
+
 Then
 ```
+npm install
 bower install
 ```
 
