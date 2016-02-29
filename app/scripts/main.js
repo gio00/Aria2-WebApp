@@ -1,7 +1,7 @@
 var options = { 'host': 'localhost', 'port': 6800, 'secure': false }
 var aria2 = new Aria2(options)
 var isOpen = false
-aria2.open(function() {
+
     Vue.config.debug = true;
     var v = new Vue({
         el: '#body',
@@ -35,7 +35,13 @@ aria2.open(function() {
         methods: {
             relaodAria: function() {
                 aria2 = new Aria2(this.ariaOpt)
-                aria2.open(function() {});
+                var self = this;
+                aria2.open(function() {
+                    aria2.getGlobalOption(function(err, res) {
+                        self.options = res
+                    });
+                });
+                
                 this.toggle = ! this.toggle
             },
             setupNotifications: function() {
@@ -122,5 +128,5 @@ aria2.open(function() {
                 });
             }
         }
-    })
-});
+    });
+
