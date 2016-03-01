@@ -16,29 +16,30 @@
     <!-- build:js scripts/vendor/modernizr.js -->
     <script src="/bower_components/modernizr/modernizr.js"></script>
     <!-- endbuild -->
-<link rel="apple-touch-icon" sizes="57x57" href="favicons/apple-touch-icon-57x57.png">
-<link rel="apple-touch-icon" sizes="60x60" href="favicons/apple-touch-icon-60x60.png">
-<link rel="apple-touch-icon" sizes="72x72" href="favicons/apple-touch-icon-72x72.png">
-<link rel="apple-touch-icon" sizes="76x76" href="favicons/apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" sizes="114x114" href="favicons/apple-touch-icon-114x114.png">
-<link rel="apple-touch-icon" sizes="120x120" href="favicons/apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" sizes="144x144" href="favicons/apple-touch-icon-144x144.png">
-<link rel="apple-touch-icon" sizes="152x152" href="favicons/apple-touch-icon-152x152.png">
-<link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon-180x180.png">
-<link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="favicons/favicon-194x194.png" sizes="194x194">
-<link rel="icon" type="image/png" href="favicons/favicon-96x96.png" sizes="96x96">
-<link rel="icon" type="image/png" href="favicons/android-chrome-192x192.png" sizes="192x192">
-<link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="favicons/manifest.json">
-<link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#91dc5a">
-<link rel="shortcut icon" href="favicons/favicon.ico">
-<meta name="apple-mobile-web-app-title" content="AriaApp">
-<meta name="application-name" content="AriaApp">
-<meta name="msapplication-TileColor" content="#353535">
-<meta name="msapplication-TileImage" content="favicons/mstile-144x144.png">
-<meta name="msapplication-config" content="favicons/browserconfig.xml">
-<meta name="theme-color" content="#ffffff"></head>
+    <link rel="apple-touch-icon" sizes="57x57" href="favicons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="favicons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="favicons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="favicons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="favicons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="favicons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="favicons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="favicons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicons/favicon-194x194.png" sizes="194x194">
+    <link rel="icon" type="image/png" href="favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="favicons/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="favicons/manifest.json">
+    <link rel="mask-icon" href="favicons/safari-pinned-tab.svg" color="#91dc5a">
+    <link rel="shortcut icon" href="favicons/favicon.ico">
+    <meta name="apple-mobile-web-app-title" content="AriaApp">
+    <meta name="application-name" content="AriaApp">
+    <meta name="msapplication-TileColor" content="#353535">
+    <meta name="msapplication-TileImage" content="favicons/mstile-144x144.png">
+    <meta name="msapplication-config" content="favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+</head>
 <body id="body">
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
@@ -55,31 +56,31 @@
             <h3 class="text-muted">AriaApp </h3>
         </div>
         <div class="form-group" style="margin-bottom: 2em">
-            <input v-model="urlfield" type="text" v-on:keyup.enter="toggle ? 'nothing'  : aria2.addUri([urlfield], callback)" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
+            <input v-model="urlfield" type="text" v-on:keyup.enter="downloadAll" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
         </div>
         <div v-if="toggle" transition="slide">
                 <legend>Connection settings</legend>
-                    <div class="form-group" v-for="(var, op) in ariaOpt">
-                        <label for="">{{ var.split('-').join(' ') }}</label>
-                        <input v-model="ariaOpt[var]" type="text" class="form-control" id="" placeholder="Input field" :value="op">
-                    </div>                
+                <div class="form-group" v-for="(key, op) in ariaOpt">
+                    <label for="{{key}}Id">{{ key.split('-').join(' ') }}</label>
+                    <input v-model="ariaOpt[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
+                </div>                
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="relaodAria">Save</button>
                 <legend style="padding-top: 1.4em;">Settings</legend>
-                    <div class="form-group" v-for="(var, op) in options | filterBy urlfield | orderBy 'var'">
-                        <label for="">{{ var.split('-').join(' ') }}</label>
-                        <input v-model="options[var]" type="text" class="form-control" id="" placeholder="Input field" :value="op">
+                    <div class="form-group" v-for="(key, op) in options | filterBy urlfield | orderBy 'key'">
+                        <label for="{{key}}Id">{{ key.split('-').join(' ') }}</label>
+                        <input v-model="options[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
                     </div>            
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="aria2.changeGlobalOption(options,optCallback)">Save</button>
         </div>
-        <div v-else="" class="element" v-for="d in all" v-bind:class="{
+        <div v-else class="element" v-for="d in all" v-bind:class="{
                       'border-success': d.status == 'complete', 
                       'border-primary': d.status == 'active',
                       'border-danger': d.status == 'error',
                       'border-warning': d.status == 'paused',
                       'border-danger': d.status == 'removed'
                       }">
-            <h4 class="" v-if="typeof d.bittorrent != 'undefined'">{{ d.bittorrent.info.name }}</h4>
-            <h4 class="" v-else="">{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
+            <h4 v-if="typeof d.bittorrent != 'undefined'">{{ d.bittorrent.info.name }}</h4>
+            <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
             <div class="progress">
                 <div class="progress-bar progress-bar-striped" v-bind:class="{
                       'progress-bar-success': d.status == 'complete', 
@@ -89,25 +90,30 @@
                       'progress-bar-danger': d.status == 'removed',
                       'active': d.status == 'active',
                       'active': (d.totalLength == 0 ) & d.status != 'removed'
-                      }" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
+                      }" 
+                      role="progressbar" 
+                      :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" 
+                      aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" 
+                      :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}"
+                >
                     {{ ((d.totalLength == 0 ) ? '' : (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}
                 </div>
             </div>
             <span class="speed text-success  pull-left">{{ byteCount(d.downloadSpeed, 1024) }}/s</span>
             <span class="speed text-danger  pull-left">{{byteCount(d.uploadSpeed, 1024) }}/s</span>
-            <div class="btn-group" role="group" aria-label="...">
+            <div class="btn-group" role="group">
                 <button type="button" class="btn btn-default btn-sm" v-on:click.stop.prevent="aria2.removeDownloadResult(d.gid, callback);">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true">
-                </span></button>
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                </button>
                 <button type="button" class="btn btn-danger btn-sm" v-on:click.stop.prevent="aria2.remove(d.gid, callback);">
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true">
-                </span></button>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
                 <button type="button" class="btn btn-primary btn-sm" v-on:click.stop.prevent="aria2.pause(d.gid, callback );">
-                    <span class="glyphicon glyphicon-pause" aria-hidden="true">
-                </span></button>
+                    <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                </button>
                 <button type="button" class="btn btn-success btn-sm" v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">
-                    <span class="glyphicon glyphicon-play" aria-hidden="true">
-                </span></button>
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                </button>
             </div>
         </div>
         <pre v-if="urlfield == 'debug'">{{ $data | json }}</pre>

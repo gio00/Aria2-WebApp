@@ -15,9 +15,9 @@ var v = new Vue({
         stopped: []
     },
     ready: function() {
+        this.ariaOpt = options
         this.relaodAria()
         setInterval(this.initAria, 1000);
-        this.ariaOpt = options
         this.setupNotifications();
     },
     computed: {
@@ -29,6 +29,15 @@ var v = new Vue({
         }
     },
     methods: {
+        downloadAll: function(){
+            var urls = this.urlfield.split(' ')
+            var self = this;
+            if(!this.toggle){ 
+                for (var i = 0; i < urls.length; i++) {
+                    aria2.addUri([urls[i]], self.callback)       
+                }
+            }
+        },
         relaodAria: function() {
             aria2 = new Aria2(this.ariaOpt)
             var self = this;
