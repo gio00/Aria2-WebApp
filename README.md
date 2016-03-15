@@ -1,6 +1,6 @@
 # AriaApp
 
-Simple web gui of aria2
+Simple web gui of aria2 [The next generation download utility](https://aria2.github.io).
 
 # Getting started
 
