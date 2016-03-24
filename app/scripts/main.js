@@ -19,6 +19,7 @@ var v = new Vue({
         this.relaodAria()
         setInterval(this.initAria, 1000);
         this.setupNotifications();
+        this.galleryUploader();
     },
     computed: {
         aria2: function() {
