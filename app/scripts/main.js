@@ -100,6 +100,24 @@ var v = new Vue({
             var pre = ' ' + (unit === 1000 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit === 1000 ? "" : "i") + 'B';
             return (bytes / Math.pow(unit, exp)).toFixed(1) + pre;
         },
+        galleryUploader: function(){
+            var v = new qq.FineUploader({
+                element: document.getElementById("fine-uploader-gallery"),
+                template: 'qq-template-gallery',
+                request: {
+                    endpoint: '/server/uploads'
+                },
+                thumbnails: {
+                    placeholders: {
+                        waitingPath: '/source/placeholders/waiting-generic.png',
+                        notAvailablePath: '/source/placeholders/not_available-generic.png'
+                    }
+                },
+                validation: {
+                    allowedExtensions: ['torrent']
+                }
+            })
+        },
         initAria: function() {
             var self = this;
 

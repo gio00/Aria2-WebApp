@@ -55,8 +55,14 @@
             </ul>
             <h3 class="text-muted">AriaApp </h3>
         </div>
+        <div id="fine-uploader-gallery"></div>
         <div class="form-group" style="margin-bottom: 2em">
-            <input v-model="urlfield" type="text" v-on:keyup.enter="downloadAll" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
+            <div class="input-group">
+                <input v-model="urlfield" type="text" v-on:keyup.enter="downloadAll" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button">Upload torrent file</button>
+                </span>
+            </div><!-- /input-group -->
         </div>
         <div v-if="toggle" transition="slide">
                 <legend>Connection settings</legend>
