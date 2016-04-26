@@ -55,12 +55,14 @@
             </ul>
             <h3 class="text-muted">AriaApp </h3>
         </div>
-        <div id="fine-uploader-gallery"></div>
         <div class="form-group" style="margin-bottom: 2em">
             <div class="input-group">
                 <input v-model="urlfield" type="text" v-on:keyup.enter="downloadAll" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
+                <!-- <span class="input-group-btn">
+                </span> -->
+                <input id="fileupload" type="file" style="display:none" @change="onFileChange">
                 <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Upload torrent file</button>
+                    <button type="file" class="btn btn-default" onclick="$('#fileupload').click();" type="button">Upload torrent!</button>
                 </span>
             </div><!-- /input-group -->
         </div>
@@ -69,17 +71,17 @@
                 <div class="form-group" v-for="(key, op) in ariaOpt">
                     <label for="{{key}}Id">{{ key.split('-').join(' ') }}</label>
                     <input v-model="ariaOpt[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
-                </div>                
+                </div>
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="relaodAria">Save</button>
                 <legend style="padding-top: 1.4em;">Settings</legend>
                     <div class="form-group" v-for="(key, op) in options | filterBy urlfield | orderBy 'key'">
                         <label for="{{key}}Id">{{ key.split('-').join(' ') }}</label>
                         <input v-model="options[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
-                    </div>            
+                    </div>
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="aria2.changeGlobalOption(options,optCallback)">Save</button>
         </div>
         <div v-else class="element" v-for="d in all" v-bind:class="{
-                      'border-success': d.status == 'complete', 
+                      'border-success': d.status == 'complete',
                       'border-primary': d.status == 'active',
                       'border-danger': d.status == 'error',
                       'border-warning': d.status == 'paused',
@@ -89,17 +91,17 @@
             <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
             <div class="progress">
                 <div class="progress-bar progress-bar-striped" v-bind:class="{
-                      'progress-bar-success': d.status == 'complete', 
+                      'progress-bar-success': d.status == 'complete',
                       'progress-bar-primary': d.status == 'active',
                       'progress-bar-danger': d.status == 'error',
                       'progress-bar-warning': d.status == 'paused',
                       'progress-bar-danger': d.status == 'removed',
                       'active': d.status == 'active',
                       'active': (d.totalLength == 0 ) & d.status != 'removed'
-                      }" 
-                      role="progressbar" 
-                      :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" 
-                      aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" 
+                      }"
+                      role="progressbar"
+                      :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength"
+                      aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength"
                       :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}"
                 >
                     {{ ((d.totalLength == 0 ) ? '' : (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}
@@ -138,7 +140,7 @@
     <script src="scripts/desktop-notify.min.js"></script>
     <!-- endbuild -->
     <!-- build:js scripts/plugins.js -->
-    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
+    <!-- <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/affix.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/alert.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/dropdown.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js"></script>
@@ -149,11 +151,10 @@
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/carousel.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/scrollspy.js"></script>
     <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/collapse.js"></script>
-    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script>
+    <script src="/bower_components/bootstrap-sass/assets/javascripts/bootstrap/tab.js"></script> -->
     <!-- endbuild -->
     <!-- build:js scripts/main.js -->
     <script src="scripts/main.js"></script>
     <!-- endbuild -->
-    <script src="scripts/fine-uploader.min.js"></script>
 </body>
 </html>

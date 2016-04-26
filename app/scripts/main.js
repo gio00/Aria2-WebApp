@@ -6,6 +6,7 @@ var v = new Vue({
     el: '#body',
     data: {
         urlfield: '',
+        torrent:'',
         ariaOpt: {},
         toggle: false,
         connected: false,
@@ -19,7 +20,6 @@ var v = new Vue({
         this.relaodAria()
         setInterval(this.initAria, 1000);
         this.setupNotifications();
-        this.galleryUploader();
     },
     computed: {
         aria2: function() {
@@ -30,12 +30,37 @@ var v = new Vue({
         }
     },
     methods: {
+        onFileChange: function(e) {
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length)
+            return;
+          this.createImage(files[0]);
+        },
+        createImage: function(file) {
+          var reader = new FileReader();
+          var self = this;
+          reader.readAsDataURL(file);
+          reader.onload = function (e) {
+              self.torrent = e.target.result.substr("data:;base64,".length)
+              self.downloadAll();
+          }
+          reader.onerror = function (e) {
+              // notify an Error
+          }
+        },
+        removeImage: function (e) {
+          this.image = '';
+        },
         downloadAll: function(){
-            var urls = this.urlfield.split(' ')
             var self = this;
-            if(!this.toggle){ 
-                for (var i = 0; i < urls.length; i++) {
-                    aria2.addUri([urls[i]], self.callback)       
+            if(this.torrent != ""){
+                aria2.addTorrent(self.torrent, self.callback)
+            }else{
+                var urls = this.urlfield.split(' ')
+                if(!this.toggle){
+                    for (var i = 0; i < urls.length; i++) {
+                        aria2.addUri([urls[i]], self.callback)
+                    }
                 }
             }
         },
@@ -101,24 +126,6 @@ var v = new Vue({
             var pre = ' ' + (unit === 1000 ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (unit === 1000 ? "" : "i") + 'B';
             return (bytes / Math.pow(unit, exp)).toFixed(1) + pre;
         },
-        galleryUploader: function(){
-            var v = new qq.FineUploader({
-                element: document.getElementById("fine-uploader-gallery"),
-                template: 'qq-template-gallery',
-                request: {
-                    endpoint: '/server/uploads'
-                },
-                thumbnails: {
-                    placeholders: {
-                        waitingPath: '/source/placeholders/waiting-generic.png',
-                        notAvailablePath: '/source/placeholders/not_available-generic.png'
-                    }
-                },
-                validation: {
-                    allowedExtensions: ['torrent']
-                }
-            })
-        },
         initAria: function() {
             var self = this;
 
@@ -152,4 +159,3 @@ var v = new Vue({
         }
     }
 });
-
