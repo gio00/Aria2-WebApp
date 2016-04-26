@@ -1,4 +1,4 @@
-# AriaApp
+# Aria2-WebApp
 
 Simple web gui of aria2 [The next generation download utility](https://aria2.github.io).
 
