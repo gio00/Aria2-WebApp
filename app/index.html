@@ -48,25 +48,25 @@
         <div id="alertspace"></div>
         <div class="header">
             <ul class="nav nav-pills pull-right">
-                <li><a href="#" 
+                <li><a href="#"
                 data-toggle="tooltip" data-placement="bottom" title="Remove all completed"
                 v-on:click.stop.prevent="aria2.purgeDownloadResult(callback)">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span> 
+                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
                 </a></li>
-                <li><a href="#" 
+                <li><a href="#"
                 data-toggle="tooltip" data-placement="bottom" title="Pause all"
                 v-on:click.stop.prevent="aria2.pauseAll(callback)">
-                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span> 
+                    <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                 </a></li>
-                <li><a href="#" 
+                <li><a href="#"
                 data-toggle="tooltip" data-placement="bottom" title="Play all"
                 v-on:click.stop.prevent="aria2.unpauseAll(callback)">
                     <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                  </a></li>
-                <li :class="{'active': toggle}"><a href="#" 
+                <li :class="{'active': toggle}"><a href="#"
                 data-toggle="tooltip" data-placement="bottom" title="Toggle settings"
                 v-on:click.stop.prevent="toggle = !toggle">
-                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span> 
+                    <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                 </a></li>
             </ul>
             <h3 class="text-muted">AriaApp </h3>
@@ -76,7 +76,7 @@
                 <input v-model="urlfield" type="text" v-on:keyup.enter="downloadAll" class="form-control" id="" :placeholder="toggle ? 'Search an option..' : 'Downlad something...' ">
                 <!-- <span class="input-group-btn">
                 </span> -->
-                <input id="fileupload" type="file" style="display:none" @change="onFileChange">
+                <input id="fileupload" type="file" style="display:none" v-on:change="onFileChange">
                 <span class="input-group-btn">
                     <button type="file" class="btn btn-default" onclick="$('#fileupload').click();" type="button">Upload torrent!</button>
                 </span>
@@ -126,7 +126,7 @@
             <span class="speed text-success  pull-left">{{ byteCount(d.downloadSpeed, 1024) }}/s</span>
             <span class="speed text-danger  pull-left">{{byteCount(d.uploadSpeed, 1024) }}/s</span>
             <div class="btn-group" role="group">
-                <button type="button" class="btn btn-default btn-sm" 
+                <button type="button" class="btn btn-default btn-sm"
                 data-toggle="tooltip" data-placement="bottom" title="Remove Completed"
                 v-on:click.stop.prevent="aria2.removeDownloadResult(d.gid, callback);">
                     <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
@@ -136,12 +136,12 @@
                 v-on:click.stop.prevent="aria2.remove(d.gid, callback);">
                     <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" 
+                <button type="button" class="btn btn-primary btn-sm"
                 data-toggle="tooltip" data-placement="bottom" title="Pause"
                 v-on:click.stop.prevent="aria2.pause(d.gid, callback );">
                     <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                 </button>
-                <button type="button" class="btn btn-success btn-sm" 
+                <button type="button" class="btn btn-success btn-sm"
                 data-toggle="tooltip" data-placement="bottom" title="Play"
                 v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">
                     <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
