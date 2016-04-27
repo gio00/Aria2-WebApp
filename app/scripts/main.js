@@ -20,6 +20,7 @@ var v = new Vue({
     },
     ready: function() {
         this.ariaOpt = options
+        this.checkCookie()
         this.relaodAria()
         setInterval(this.initAria, 1000);
         this.setupNotifications();
@@ -33,6 +34,32 @@ var v = new Vue({
         }
     },
     methods: {
+        setCookie:function(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays*24*60*60*1000));
+            var expires = "expires="+d.toUTCString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        },
+         getCookie: function(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        },
+        checkCookie:function(){
+          var host = this.getCookie("host");
+           if (host!="") {
+             this.ariaOpt["host"] = host
+           }
+         },
         onFileChange: function(e) {
           var files = e.target.files || e.dataTransfer.files;
           if (!files.length)
@@ -68,8 +95,13 @@ var v = new Vue({
             }
         },
         relaodAria: function() {
+            this.active=[]
+            this.waiting=[]
+            this.stopped=[]
+            this.connected = false
             aria2 = new Aria2(this.ariaOpt)
             var self = this;
+            this.setCookie("host", this.ariaOpt["host"], 100)
             aria2.open(function() {
                 aria2.getGlobalOption(function(err, res) {
                     self.options = res
