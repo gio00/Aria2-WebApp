@@ -9,6 +9,7 @@ var v = new Vue({
     el: '#body',
     data: {
         urlfield: '',
+        torrent:'',
         ariaOpt: {},
         toggle: false,
         connected: false,
@@ -32,12 +33,37 @@ var v = new Vue({
         }
     },
     methods: {
+        onFileChange: function(e) {
+          var files = e.target.files || e.dataTransfer.files;
+          if (!files.length)
+            return;
+          this.createImage(files[0]);
+        },
+        createImage: function(file) {
+          var reader = new FileReader();
+          var self = this;
+          reader.readAsDataURL(file);
+          reader.onload = function (e) {
+              self.torrent = e.target.result.substr("data:;base64,".length)
+              self.downloadAll();
+          }
+          reader.onerror = function (e) {
+              // notify an Error
+          }
+        },
+        removeImage: function (e) {
+          this.image = '';
+        },
         downloadAll: function(){
-            var urls = this.urlfield.split(' ')
             var self = this;
-            if(!this.toggle){ 
-                for (var i = 0; i < urls.length; i++) {
-                    aria2.addUri([urls[i]], self.callback)       
+            if(this.torrent != ""){
+                aria2.addTorrent(self.torrent, self.callback)
+            }else{
+                var urls = this.urlfield.split(' ')
+                if(!this.toggle){
+                    for (var i = 0; i < urls.length; i++) {
+                        aria2.addUri([urls[i]], self.callback)
+                    }
                 }
             }
         },
@@ -136,4 +162,3 @@ var v = new Vue({
         }
     }
 });
-

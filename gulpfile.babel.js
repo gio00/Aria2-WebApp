@@ -13,16 +13,16 @@ import realFavicon from 'gulp-real-favicon';
 import fs from 'fs';
 
 import taskListing from 'gulp-task-listing';
-// Add a task to render the output 
+// Add a task to render the output
 gulp.task('help', taskListing);
 
 
 // File where the favicon markups are stored
 var FAVICON_DATA_FILE = 'app/favicons/manifest.json';
 
-// Generate the icons. This task takes a few seconds to complete. 
-// You should run it at least once to create the icons. Then, 
-// you should run it whenever RealFaviconGenerator updates its 
+// Generate the icons. This task takes a few seconds to complete.
+// You should run it at least once to create the icons. Then,
+// you should run it whenever RealFaviconGenerator updates its
 // package (see the check-for-favicon-update task below).
 gulp.task('generate-favicon', function(done) {
   realFavicon.generateFavicon({
@@ -73,8 +73,8 @@ gulp.task('generate-favicon', function(done) {
   });
 });
 
-// Inject the favicon markups in your HTML pages. You should run 
-// this task whenever you modify a page. You can keep this task 
+// Inject the favicon markups in your HTML pages. You should run
+// this task whenever you modify a page. You can keep this task
 // as is or refactor your existing HTML pipeline.
 gulp.task('inject-favicon-markups', function() {
   gulp.src([ 'app/index.html' ])
@@ -84,7 +84,7 @@ gulp.task('inject-favicon-markups', function() {
 
 // Check for updates on RealFaviconGenerator (think: Apple has just
 // released a new Touch icon along with the latest version of iOS).
-// Run this task from time to time. Ideally, make it part of your 
+// Run this task from time to time. Ideally, make it part of your
 // continuous integration system.
 gulp.task('check-for-favicon-update', function(done) {
   var currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
