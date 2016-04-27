@@ -1,6 +1,9 @@
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip({delay: { "show": 700, "hide": 100 }})
+})
+
 var options = { 'host': 'localhost', 'port': 6800, 'secure': false }
 var aria2 = new Aria2(options)
-
 Vue.config.debug = true;
 var v = new Vue({
     el: '#body',
