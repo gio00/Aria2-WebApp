@@ -103,7 +103,7 @@
                       'border-warning': d.status == 'paused',
                       'border-danger': d.status == 'removed'
                       }">
-            <h4 v-if="typeof d.bittorrent != 'undefined'">{{ d.bittorrent.info.name }}</h4>
+            <h4 v-if="typeof d.bittorrent != 'undefined'">{{ d.bittorrent.hasOwnProperty("info") ? d.bittorrent.info.name : d.files.path }}</h4>
             <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
             <div class="progress">
                 <div class="progress-bar progress-bar-striped" v-bind:class="{
