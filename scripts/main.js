@@ -1,1 +1,207 @@
-"use strict";$(function(){$('[data-toggle="tooltip"]').tooltip({delay:{show:700,hide:100}})});var options={host:"localhost",port:6800,secure:!1},_aria=new Aria2(options);Vue.config.debug=!0;var v=new Vue({el:"#body",data:{urlfield:"",torrent:"",ariaOpt:{},toggle:!1,connected:!1,options:{},active:[],waiting:[],stopped:[]},ready:function(){this.ariaOpt=options,this.checkCookie(),this.relaodAria(),setInterval(this.initAria,1e3),this.setupNotifications()},computed:{aria2:function(){return _aria},all:function(){return this.stopped.concat(this.waiting).concat(this.active)}},methods:{setCookie:function(t,i,o){var e=new Date;e.setTime(e.getTime()+24*o*60*60*1e3);var n="expires="+e.toUTCString();document.cookie=t+"="+i+"; "+n},getCookie:function(t){for(var i=t+"=",o=document.cookie.split(";"),e=0;e<o.length;e++){for(var n=o[e];" "==n.charAt(0);)n=n.substring(1);if(0==n.indexOf(i))return n.substring(i.length,n.length)}return""},checkCookie:function(){var t=this.getCookie("host");""!=t&&(this.ariaOpt.host=t)},onFileChange:function(t){var i=t.target.files||t.dataTransfer.files;i.length&&this.createImage(i[0])},createImage:function(t){var i=new FileReader,o=this;i.readAsDataURL(t),i.onload=function(t){o.torrent=t.target.result.substr("data:;base64,".length),o.downloadAll()},i.onerror=function(t){}},removeImage:function(t){this.image=""},downloadAll:function(){var t=this;if(""!=this.torrent)_aria.addTorrent(t.torrent,t.callback);else{var i=this.urlfield.split(" ");if(!this.toggle)for(var o=0;o<i.length;o++)_aria.addUri([i[o]],t.callback)}},relaodAria:function(){this.active=[],this.waiting=[],this.stopped=[],this.connected=!1,_aria=new Aria2(this.ariaOpt);var t=this;this.setCookie("host",this.ariaOpt.host,100),_aria.open(function(){_aria.getGlobalOption(function(i,o){t.options=o})}),this.toggle=!1},setupNotifications:function(){notify.requestPermission(function(){var t=notify.permissionLevel();t===notify.PERMISSION_GRANTED});var t=this;_aria.onDownloadComplete=function(i){t.notify(i.gid,"Download Complete")},_aria.onDownloadStart=function(i){t.notify(i.gid,"Download Started")}},notify:function(t){function i(i,o){return t.apply(this,arguments)}return i.toString=function(){return t.toString()},i}(function(t,i){_aria.getFiles(t,function(t,o){void 0!=t&&this.notifyError(t),notify.createNotification(o[0].path.split("/")[o[0].path.split("/").length-1],{body:i,icon:"images/icon.png"})})}),notifyError:function(t){void 0!=t&&notify.createNotification("Errore",{body:t.message,icon:"images/icon.png"})},optCallback:function(t,i){$("#alertspace").append('<div id="alert" class="alert alert-success"><a class="close" data-dismiss="alert">×</a><span>'+i+"</span></div>"),setTimeout(function(){$("#alert").remove()},4e3),this.toggle=!this.toggle},callback:function(t,i){t&&this.notifyError(t),console.log(i)},byteCount:function(t,i){if(t<(i=i||1e3))return t+" B";var o=Math.floor(Math.log(t)/Math.log(i)),e=" "+(1e3===i?"kMGTPE":"KMGTPE").charAt(o-1)+(1e3===i?"":"i")+"B";return(t/Math.pow(i,o)).toFixed(1)+e},initAria:function(){var t=this;_aria.tellActive(function(i,o){i?(t.notifyError(i),t.connected=!1):t.connected=!0,t.$set("active",o)}),_aria.tellWaiting(0,1e3,function(i,o){i?(t.notifyError(i),t.connected=!1):t.connected=!0,t.$set("waiting",o)}),_aria.tellStopped(0,1e3,function(i,o){i?(t.notifyError(i),t.connected=!1):t.connected=!0,t.$set("stopped",o)})}}});
+"use strict";
+
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip({ delay: { 'show': 700, 'hide': 100 } });
+});
+
+var options = { 'host': 'localhost', 'port': 6800, 'secure': false };
+var _aria = new Aria2(options);
+Vue.config.debug = true;
+var v = new Vue({
+    el: '#body',
+    data: {
+        urlfield: '',
+        torrent: '',
+        ariaOpt: {},
+        toggle: false,
+        connected: false,
+        options: {},
+        active: [],
+        waiting: [],
+        stopped: []
+    },
+    ready: function ready() {
+        this.ariaOpt = options;
+        this.checkCookie();
+        this.relaodAria();
+        setInterval(this.initAria, 1000);
+        this.setupNotifications();
+    },
+    computed: {
+        aria2: function aria2() {
+            return _aria;
+        },
+        all: function all() {
+            return this.stopped.concat(this.waiting).concat(this.active);
+        }
+    },
+    methods: {
+        setCookie: function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
+            var expires = 'expires=' + d.toUTCString();
+            document.cookie = cname + '=' + cvalue + '; ' + expires;
+        },
+        getCookie: function getCookie(cname) {
+            var name = cname + '=';
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return '';
+        },
+        checkCookie: function checkCookie() {
+            var host = this.getCookie('host');
+            if (host != '') {
+                this.ariaOpt['host'] = host;
+            }
+        },
+        onFileChange: function onFileChange(e) {
+            var files = e.target.files || e.dataTransfer.files;
+            if (!files.length) return;
+            this.createImage(files[0]);
+        },
+        createImage: function createImage(file) {
+            var reader = new FileReader();
+            var self = this;
+            reader.readAsDataURL(file);
+            reader.onload = function (e) {
+                self.torrent = e.target.result.substr('data:;base64,'.length);
+                self.downloadAll();
+            };
+            reader.onerror = function (e) {
+                // notify an Error
+            };
+        },
+        removeImage: function removeImage(e) {
+            this.image = '';
+        },
+        downloadAll: function downloadAll() {
+            var self = this;
+            if (this.torrent != "") {
+                _aria.addTorrent(self.torrent, self.callback);
+            } else {
+                var urls = this.urlfield.split(' ');
+                if (!this.toggle) {
+                    for (var i = 0; i < urls.length; i++) {
+                        _aria.addUri([urls[i]], self.callback);
+                    }
+                }
+            }
+        },
+        relaodAria: function relaodAria() {
+            this.active = [];
+            this.waiting = [];
+            this.stopped = [];
+            this.connected = false;
+            _aria = new Aria2(this.ariaOpt);
+            var self = this;
+            this.setCookie('host', this.ariaOpt['host'], 100);
+            _aria.open(function () {
+                _aria.getGlobalOption(function (err, res) {
+                    self.options = res;
+                });
+            });
+            this.toggle = false;
+        },
+        setupNotifications: function setupNotifications() {
+            notify.requestPermission(function () {
+                var permissionLevel = notify.permissionLevel();
+                var permissionsGranted = permissionLevel === notify.PERMISSION_GRANTED;
+            });
+            var self = this;
+            _aria.onDownloadComplete = function (gid) {
+                self.notify(gid['gid'], 'Download Complete');
+            };
+            _aria.onDownloadStart = function (gid) {
+                self.notify(gid['gid'], 'Download Started');
+            };
+        },
+        notify: function (_notify) {
+            function notify(_x, _x2) {
+                return _notify.apply(this, arguments);
+            }
+
+            notify.toString = function () {
+                return _notify.toString();
+            };
+
+            return notify;
+        }(function (gid, message) {
+            _aria.getFiles(gid, function (err, res) {
+                if (undefined != err) {
+                    this.notifyError(err);
+                }
+                notify.createNotification(res[0].path.split('/')[res[0].path.split('/').length - 1], {
+                    body: message,
+                    icon: 'images/icon.png'
+                });
+            });
+        }),
+        notifyError: function notifyError(err) {
+            if (undefined != err) {
+                notify.createNotification('Errore', {
+                    body: err['message'],
+                    icon: 'images/icon.png'
+                });
+            }
+        },
+        optCallback: function optCallback(err, res) {
+            $('#alertspace').append('<div id="alert" class="alert alert-success"><a class="close" data-dismiss="alert">×</a><span>' + res + '</span></div>');
+            setTimeout(function () {
+                $('#alert').remove();
+            }, 4000);
+            this.toggle = !this.toggle;
+        },
+        callback: function callback(err, res) {
+            if (err) {
+                this.notifyError(err);
+            }
+            console.log(res);
+        },
+        byteCount: function byteCount(bytes, unit) {
+            if (bytes < (unit = unit || 1000)) return bytes + ' B';
+            var exp = Math.floor(Math.log(bytes) / Math.log(unit));
+            var pre = ' ' + (unit === 1000 ? 'kMGTPE' : 'KMGTPE').charAt(exp - 1) + (unit === 1000 ? '' : 'i') + 'B';
+            return (bytes / Math.pow(unit, exp)).toFixed(1) + pre;
+        },
+        initAria: function initAria() {
+            var self = this;
+
+            _aria.tellActive(function (err, res) {
+                if (err) {
+                    self.notifyError(err);
+                    self.connected = false;
+                } else {
+                    self.connected = true;
+                }
+                self.$set('active', res);
+            });
+            _aria.tellWaiting(0, 1000, function (err, res) {
+                if (err) {
+                    self.notifyError(err);
+                    self.connected = false;
+                } else {
+                    self.connected = true;
+                }
+                self.$set('waiting', res);
+            });
+            _aria.tellStopped(0, 1000, function (err, res) {
+                if (err) {
+                    self.notifyError(err);
+                    self.connected = false;
+                } else {
+                    self.connected = true;
+                }
+                self.$set('stopped', res);
+            });
+        }
+    }
+});
+//# sourceMappingURL=main.js.map
