@@ -97,7 +97,7 @@
             </div>
             <div class="row" v-else>
                 <div  class="element border-{{ classByStatus(d.status) }}" v-for="d in all">
-                    <h4 v-if="d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
+                    <h4 v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
                     <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d.status) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
