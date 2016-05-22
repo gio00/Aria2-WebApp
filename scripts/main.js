@@ -36,6 +36,14 @@ var v = new Vue({
         }
     },
     methods: {
+        classByStatus: function classByStatus(status) {
+            if (status == 'complete') return 'success';
+            if (status == 'active') return 'primary';
+            if (status == 'error') return 'danger';
+            if (status == 'paused') return 'warning';
+            if (status == 'removed') return 'danger';
+            if (status == 'active' || d.totalLength == 0 & d.status != 'removed') return 'active';
+        },
         setCookie: function setCookie(cname, cvalue, exdays) {
             var d = new Date();
             d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000);
