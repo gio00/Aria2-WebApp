@@ -10,6 +10,7 @@ Vue.config.debug = true;
 var v = new Vue({
     el: '#body',
     data: {
+        globalStats: {},
         urlfield: '',
         torrent:'',
         ariaOpt: {},
@@ -36,18 +37,20 @@ var v = new Vue({
         }
     },
     methods: {
-        classByStatus: function(status){
-            if(status == 'complete')
+        classByStatus: function(d){
+            if(d.status == 'complete')
                 return 'success';
-            if(status == 'active')
+            if(d.status == 'active')
                 return 'primary';
-            if(status == 'error')
+            if(d.status == 'error')
                 return 'danger';
-            if(status == 'paused')
+            if(d.status == 'paused')
                 return 'warning';
-            if(status == 'removed')
+            if(d.status == 'waiting')
+                return 'info';
+            if(d.status == 'removed')
                 return 'danger';
-            if ( status == 'active' || (d.totalLength == 0 ) & d.status != 'removed' )
+            if ( d.status == 'active' || (d.totalLength == 0 ) & d.status != 'removed' )
                 return 'active';
         },
         setCookie:function(cname, cvalue, exdays) {
@@ -178,7 +181,15 @@ var v = new Vue({
         },
         initAria: function() {
             var self = this;
-
+            aria2.getGlobalStat(function(err, res){
+                if (err) {
+                    self.notifyError(err);
+                    self.connected = false;
+                } else {
+                    self.connected = true;
+                }
+                self.globalStats = res;
+            });
             aria2.tellActive(function(err, res) {
                 if (err) {
                     self.notifyError(err);

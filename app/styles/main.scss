@@ -103,7 +103,7 @@ body {
     }
 }
 .element {
-    margin-top: -1px;
+    margin-top: 0.5em;
     border: 1px solid #eee;
     padding: 5px 22px;
     border-radius: 10px;
@@ -129,6 +129,12 @@ body {
     padding: 4px 10px;
 }
 
+.info{
+    display:table;margin:0 auto; padding: 5px 0
+}
+.info span{
+    display:table-cell; padding: 0 10px
+}
 
 
 .slide-transition {
