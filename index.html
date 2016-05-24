@@ -1,11 +1,11 @@
 <!doctype html>
-<html class="no-js" lang="">
+<html class="no-js" lang="" id="body">
 
 <head>
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>AriaApp</title>
+    <title>AriaApp  {{ globalStats.downloadSpeed == undefined ? '--'  :  byteCount(globalStats.downloadSpeed, 1024)  }} {{ globalStats.uploadSpeed == undefined ? '--' : byteCount(globalStats.uploadSpeed, 1024 ) }}</title>
 
     <link rel="stylesheet" href="styles/main.css">
 
@@ -36,12 +36,12 @@
     <meta name="theme-color" content="#ffffff">
 </head>
 
-<body id="body">
+<body >
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
     <div class="container">
-        <div class="row">
+        <div class="">
             <div id="alertspace"></div>
             <div class="row">
                 <div class="page-header">
@@ -68,6 +68,13 @@
                         </li>
                     </ul>
                     <h3 class="text-muted">AriaApp</h3>
+                </div>
+                <div class="info">
+                    <span class="text-success small">down: {{ globalStats.downloadSpeed == undefined ? '--'  :  byteCount(globalStats.downloadSpeed, 1024)  }}</span>
+                    <span class="text-danger small">up: {{ globalStats.uploadSpeed == undefined ? '--' : byteCount(globalStats.uploadSpeed, 1024 ) }}</span>
+                    <span class="text-info small"> active: {{ globalStats.numActive }}</span>
+                    <span class="text-info small"> stopped: {{ globalStats.numStopped }}</span>
+                    <span class="text-info small"> waiting: {{ globalStats.numWaiting }}</span>
                 </div>
             </div>
             <div class="row">
@@ -96,12 +103,12 @@
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="aria2.changeGlobalOption(options,optCallback)">Save</button>
             </div>
             <div class="row" v-else>
-                <div  class="element border-{{ classByStatus(d.status) }}" v-for="d in all">
+                <div v-for="d in all | orderBy 'status'"  class="element border-{{ classByStatus(d) }}">
                     <h4 v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
                     <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
                     <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d.status) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
-                            <span class="{{ d.completedLength  > 1 ? '' : 'text-muted' }}">{{ ((d.totalLength == 0 ) ? '' : (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}</span>
+                        <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
+                            <span class="{{ d.completedLength  > 1 ? '' : 'text-muted' }}">{{ ((d.totalLength == 0 ) ? '' : ' ' + (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}</span>
                         </div>
                     </div>
                     <span class="speed text-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> {{ d.connections }}</span>
@@ -121,6 +128,9 @@
                         <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="bottom" title="Play" v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">
                             <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                         </button>
+                    </div>
+                    <div v-on:click="" class="">
+
                     </div>
                 </div>
             </div>

@@ -10,6 +10,7 @@ Vue.config.debug = true;
 var v = new Vue({
     el: '#body',
     data: {
+        globalStats: {},
         urlfield: '',
         torrent: '',
         ariaOpt: {},
@@ -36,13 +37,14 @@ var v = new Vue({
         }
     },
     methods: {
-        classByStatus: function classByStatus(status) {
-            if (status == 'complete') return 'success';
-            if (status == 'active') return 'primary';
-            if (status == 'error') return 'danger';
-            if (status == 'paused') return 'warning';
-            if (status == 'removed') return 'danger';
-            if (status == 'active' || d.totalLength == 0 & d.status != 'removed') return 'active';
+        classByStatus: function classByStatus(d) {
+            if (d.status == 'complete') return 'success';
+            if (d.status == 'active') return 'primary';
+            if (d.status == 'error') return 'danger';
+            if (d.status == 'paused') return 'warning';
+            if (d.status == 'waiting') return 'info';
+            if (d.status == 'removed') return 'danger';
+            if (d.status == 'active' || d.totalLength == 0 & d.status != 'removed') return 'active';
         },
         setCookie: function setCookie(cname, cvalue, exdays) {
             var d = new Date();
@@ -181,7 +183,15 @@ var v = new Vue({
         },
         initAria: function initAria() {
             var self = this;
-
+            _aria.getGlobalStat(function (err, res) {
+                if (err) {
+                    self.notifyError(err);
+                    self.connected = false;
+                } else {
+                    self.connected = true;
+                }
+                self.globalStats = res;
+            });
             _aria.tellActive(function (err, res) {
                 if (err) {
                     self.notifyError(err);
