@@ -1,28 +1,24 @@
-"use strict";
+'use strict';
 
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip({ delay: { 'show': 700, 'hide': 100 } });
-});
-
-var options = { 'host': 'localhost', 'port': 6800, 'secure': false };
-var _aria = new Aria2(options);
 Vue.config.debug = true;
-var v = new Vue({
+
+new Vue({
     el: '#body',
     data: {
-        globalStats: {},
         urlfield: '',
         torrent: '',
-        ariaOpt: {},
+        globalStats: {},
+        options: {},
+        settings: {},
         toggle: false,
         connected: false,
-        options: {},
         active: [],
         waiting: [],
         stopped: []
     },
     ready: function ready() {
-        this.ariaOpt = options;
+        $('[data-toggle="tooltip"]').tooltip({ delay: { 'show': 700, 'hide': 100 } });
+        this.settings = { 'host': 'localhost', 'port': 6800, 'secure': false };
         this.checkCookie();
         this.relaodAria();
         setInterval(this.initAria, 1000);
@@ -30,7 +26,7 @@ var v = new Vue({
     },
     computed: {
         aria2: function aria2() {
-            return _aria;
+            return new Aria2(this.settings);
         },
         all: function all() {
             return this.stopped.concat(this.waiting).concat(this.active);
@@ -69,7 +65,7 @@ var v = new Vue({
         checkCookie: function checkCookie() {
             var host = this.getCookie('host');
             if (host != '') {
-                this.ariaOpt['host'] = host;
+                this.settings['host'] = host;
             }
         },
         onFileChange: function onFileChange(e) {
@@ -95,26 +91,28 @@ var v = new Vue({
         downloadAll: function downloadAll() {
             var self = this;
             if (this.torrent != "") {
-                _aria.addTorrent(self.torrent, self.callback);
+                aria2.addTorrent(self.torrent, self.callback);
             } else {
                 var urls = this.urlfield.split(' ');
                 if (!this.toggle) {
                     for (var i = 0; i < urls.length; i++) {
-                        _aria.addUri([urls[i]], self.callback);
+                        aria2.addUri([urls[i]], self.callback);
                     }
                 }
             }
         },
         relaodAria: function relaodAria() {
+            var self = this;
             this.active = [];
             this.waiting = [];
             this.stopped = [];
+
             this.connected = false;
-            _aria = new Aria2(this.ariaOpt);
-            var self = this;
-            this.setCookie('host', this.ariaOpt['host'], 100);
-            _aria.open(function () {
-                _aria.getGlobalOption(function (err, res) {
+            this.aria2 = new Aria2(this.settings);
+            this.setCookie('host', this.settings['host'], 100);
+
+            this.aria2.open(function () {
+                self.aria2.getGlobalOption(function (err, res) {
                     self.options = res;
                 });
             });
@@ -126,10 +124,10 @@ var v = new Vue({
                 var permissionsGranted = permissionLevel === notify.PERMISSION_GRANTED;
             });
             var self = this;
-            _aria.onDownloadComplete = function (gid) {
+            this.aria2.onDownloadComplete = function (gid) {
                 self.notify(gid['gid'], 'Download Complete');
             };
-            _aria.onDownloadStart = function (gid) {
+            this.aria2.onDownloadStart = function (gid) {
                 self.notify(gid['gid'], 'Download Started');
             };
         },
@@ -144,7 +142,7 @@ var v = new Vue({
 
             return notify;
         }(function (gid, message) {
-            _aria.getFiles(gid, function (err, res) {
+            this.aria2.getFiles(gid, function (err, res) {
                 if (undefined != err) {
                     this.notifyError(err);
                 }
@@ -183,7 +181,7 @@ var v = new Vue({
         },
         initAria: function initAria() {
             var self = this;
-            _aria.getGlobalStat(function (err, res) {
+            this.aria2.getGlobalStat(function (err, res) {
                 if (err) {
                     self.notifyError(err);
                     self.connected = false;
@@ -192,7 +190,7 @@ var v = new Vue({
                 }
                 self.globalStats = res;
             });
-            _aria.tellActive(function (err, res) {
+            this.aria2.tellActive(function (err, res) {
                 if (err) {
                     self.notifyError(err);
                     self.connected = false;
@@ -201,7 +199,7 @@ var v = new Vue({
                 }
                 self.$set('active', res);
             });
-            _aria.tellWaiting(0, 1000, function (err, res) {
+            this.aria2.tellWaiting(0, 1000, function (err, res) {
                 if (err) {
                     self.notifyError(err);
                     self.connected = false;
@@ -210,7 +208,7 @@ var v = new Vue({
                 }
                 self.$set('waiting', res);
             });
-            _aria.tellStopped(0, 1000, function (err, res) {
+            this.aria2.tellStopped(0, 1000, function (err, res) {
                 if (err) {
                     self.notifyError(err);
                     self.connected = false;

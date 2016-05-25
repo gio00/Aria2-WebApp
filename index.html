@@ -2,9 +2,11 @@
 <html class="no-js" lang="" id="body">
 
 <head>
+
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
     <title>AriaApp  {{ globalStats.downloadSpeed == undefined ? '--'  :  byteCount(globalStats.downloadSpeed, 1024)  }} {{ globalStats.uploadSpeed == undefined ? '--' : byteCount(globalStats.uploadSpeed, 1024 ) }}</title>
 
     <link rel="stylesheet" href="styles/main.css">
@@ -34,6 +36,7 @@
     <meta name="msapplication-TileImage" content="favicons/mstile-144x144.png">
     <meta name="msapplication-config" content="favicons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
+
 </head>
 
 <body >
@@ -53,12 +56,12 @@
                         </li>
                         <li>
                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="Pause all" v-on:click.stop.prevent="aria2.pauseAll(callback)">
-                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
                             </a>
                         </li>
                         <li>
                             <a href="#" data-toggle="tooltip" data-placement="bottom" title="Play all" v-on:click.stop.prevent="aria2.unpauseAll(callback)">
-                                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
                             </a>
                         </li>
                         <li :class="{'active': toggle}">
@@ -76,7 +79,9 @@
                     <span class="text-info small"> stopped: {{ globalStats.numStopped }}</span>
                     <span class="text-info small"> waiting: {{ globalStats.numWaiting }}</span>
                 </div>
+                <hr>
             </div>
+
             <div class="row">
                 <div class="form-group" style="margin-bottom: 2em">
                     <div class="input-group">
@@ -88,11 +93,12 @@
                     </div>
                 </div>
             </div>
+
             <div class=row v-if="toggle" transition="slide">
                 <legend>Connection settings</legend>
-                <div class="form-group" v-for="(key, op) in ariaOpt">
+                <div class="form-group" v-for="(key, op) in settings">
                     <label for="{{key}}Id">{{ key.split('-').join(' ') }}</label>
-                    <input v-model="ariaOpt[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
+                    <input v-model="settings[key]" type="text" class="form-control" id="{{key}}Id" placeholder="Input field" :value="op">
                 </div>
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="relaodAria">Save</button>
                 <legend style="padding-top: 1.4em;">Settings</legend>
@@ -102,47 +108,62 @@
                 </div>
                 <button type="submit" class="btn btn-primary" v-on:click.stop.prevent="aria2.changeGlobalOption(options,optCallback)">Save</button>
             </div>
-            <div class="row" v-else>
-                <div v-for="d in all | orderBy 'status'"  class="element border-{{ classByStatus(d) }}">
-                    <h4 v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
-                    <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
-                    <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
-                            <span class="{{ d.completedLength  > 1 ? '' : 'text-muted' }}">{{ ((d.totalLength == 0 ) ? '' : ' ' + (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}</span>
-                        </div>
-                    </div>
-                    <span class="speed text-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> {{ d.connections }}</span>
-                    <span class="speed text-success"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> {{ byteCount(d.downloadSpeed, 1024) }}/s</span>
-                    <span class="speed text-danger"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> {{ byteCount(d.uploadSpeed, 1024) }}/s</span>
-                    <span class="speed text-info"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{ byteCount(d.completedLength, 1024) }}/{{ byteCount(d.totalLength, 1024) }}</span>
-                    <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Remove Completed" v-on:click.stop.prevent="aria2.removeDownloadResult(d.gid, callback);">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Remove" v-on:click.stop.prevent="aria2.remove(d.gid, callback);">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Pause" v-on:click.stop.prevent="aria2.pause(d.gid, callback );">
-                            <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
-                        </button>
-                        <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="bottom" title="Play" v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">
-                            <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
-                        </button>
-                    </div>
-                    <div v-on:click="" class="">
 
+            <div class="row" v-else>
+                <div v-for="d in all | orderBy 'status'"  transition="item" class="element border-{{ classByStatus(d) }}">
+                    <div class=row>
+                        <div class="col-md-11">
+
+                            <h4 v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
+                            <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
+
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
+                                    <strong>
+                                        <span class="{{ d.completedLength  > 1 ? '' : 'text-muted' }}">
+                                            {{ ((d.totalLength == 0 ) ? '' : ' ' + (d.completedLength / d.totalLength * 100).toFixed(1) + '% ') + d.status}}
+                                        </span>
+                                    </strong>
+                                </div>
+                            </div>
+
+                            <span class="stats text-info"><span class="glyphicon glyphicon-flash" aria-hidden="true"></span> {{ d.connections }}</span>
+                            <span class="stats text-success"><span class="glyphicon glyphicon-download" aria-hidden="true"></span> {{ byteCount(d.downloadSpeed, 1024) }}/s</span>
+                            <span class="stats text-danger"><span class="glyphicon glyphicon-upload" aria-hidden="true"></span> {{ byteCount(d.uploadSpeed, 1024) }}/s</span>
+                            <span class="stats text-info"><span class="glyphicon glyphicon-file" aria-hidden="true"></span> {{ byteCount(d.completedLength, 1024) }}/{{ byteCount(d.totalLength, 1024) }}</span>
+
+                        </div>
+                        <div class="btn-group-vertical" role="group">
+                            <button type="button" class="btn btn-default btn-sm" data-toggle="tooltip" data-placement="bottom" title="Remove Completed" v-on:click.stop.prevent="aria2.removeDownloadResult(d.gid, callback);">
+                                <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="tooltip" data-placement="bottom" title="Remove" v-on:click.stop.prevent="aria2.remove(d.gid, callback);">
+                                <span class="glyphicon glyphicon-stop" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="bottom" title="Pause" v-on:click.stop.prevent="aria2.pause(d.gid, callback );">
+                                <span class="glyphicon glyphicon-pause" aria-hidden="true"></span>
+                            </button>
+                            <button type="button" class="btn btn-success btn-sm" data-toggle="tooltip" data-placement="bottom" title="Play" v-on:click.stop.prevent="aria2.unpause(d.gid, callback);">
+                                <span class="glyphicon glyphicon-play" aria-hidden="true"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <pre v-if="urlfield == 'debug'">{{ $data | json }}</pre>
+
             <div class="row footer">
-                <p>Status: <span class="text-success" v-if="connected">connected</span><span class="text-danger" v-else>not connected</span> on {{ ariaOpt.host }} </p>
+                <p>Status:
+                    <span class="text-success" v-if="connected">connected</span>
+                    <span class="text-danger" v-else>not connected</span>
+                    on {{ settings.host }}
+                </p>
             </div>
         </div>
     </div>
 
     <script src="scripts/vendor.js"></script>
-
 
     <script src="scripts/plugins.js"></script>
 
