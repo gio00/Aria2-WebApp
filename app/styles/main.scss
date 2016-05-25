@@ -1,5 +1,7 @@
+
 $icon-font-path: '../fonts/';
 @import "_variables";
+
 // bower:scss
 @import "bower_components/bootstrap-sass/assets/stylesheets/_bootstrap.scss";
 // endbower
@@ -10,30 +12,13 @@ $icon-font-path: '../fonts/';
     padding: 0.2em 0;
 }
 
-
-/* Space out content a bit */
-
 body {
     padding-top: 20px;
     padding-bottom: 20px;
 }
 
-
-/* Everything but the jumbotron gets side spacing for mobile first views */
-
-.header,
-.marketing,
-.footer {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-
-/* Custom page header */
-
 .header {
     border-bottom: 1px solid #e5e5e5;
-    /* Make the masthead heading the same height as the navigation */
     h3 {
         margin-top: 0;
         margin-bottom: 0;
@@ -42,71 +27,52 @@ body {
     }
 }
 
-
-/* Custom page footer */
-
 .footer {
     padding-top: 19px;
     color: #777;
     border-top: 1px solid #e5e5e5;
 }
 
-.container-narrow > hr {
-    margin: 30px 0;
-}
-
-
-/* Main marketing message and sign up button */
-
-.jumbotron {
-    text-align: center;
-    border-bottom: 1px solid #e5e5e5;
-    .btn {
-        font-size: 21px;
-        padding: 14px 24px;
+.info{
+    display:table; margin:0 auto; padding: 0 0;
+    span{
+        display:table-cell; padding: 0 10px
     }
 }
 
-
-/* Supporting marketing content */
-
-.marketing {
-    margin: 40px 0;
-    p + h4 {
-        margin-top: 28px;
-    }
-}
-
-
-/* Responsive: Portrait tablets and up */
-
-@media screen and (min-width: 768px) {
-    .container {
-        max-width: 730px;
-    }
-    /* Remove the padding we set earlier */
-    .header,
-    .marketing,
-    .footer {
-        padding-left: 0;
-        padding-right: 0;
-        margin-top: 2em;
-        padding-top: 2em - $line-height-base/2;
-    }
-    /* Space out the masthead */
-    .header {
-        margin-bottom: 2em;
-    }
-    /* Remove the bottom border on the jumbotron for visual effect */
-    .jumbotron {
-        border-bottom: 0;
-    }
-}
-.element {
+.element{
     margin-top: 0.5em;
     border: 1px solid #eee;
-    padding: 5px 22px;
-    border-radius: 10px;
+    padding: 0 0 0 22px;
+    border-radius: 9px;
+
+    .stats{
+        padding: 0 5px;
+    }
+}
+
+.btn-group-vertical{
+    margin-left: 14.5px;
+
+    > .btn{
+        padding: 5px 10px;
+        border: none;
+    }
+
+    > .btn:first-child:not(:last-child) {
+        padding-top: 6px;
+        border-top-right-radius: 8px;
+        border-top-left-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+     > .btn:last-child:not(:first-child) {
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 0;
+    }
 }
 
 .border-success{
@@ -125,16 +91,6 @@ body {
   border: 1px solid $brand-info;
 }
 
-.speed {
-    padding: 4px 10px;
-}
-
-.info{
-    display:table;margin:0 auto; padding: 5px 0
-}
-.info span{
-    display:table-cell; padding: 0 10px
-}
 
 
 .slide-transition {
@@ -166,22 +122,28 @@ body {
     opacity: 0;
 }
 
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=1);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
+
+/* Responsive: Portrait tablets and up */
+
+@media screen and (min-width: 768px) {
+    .container {
+        max-width: 730px;
+    }
+    /* Remove the padding we set earlier */
+    .header,
+    .marketing,
+    .footer {
+        padding-left: 0;
+        padding-right: 0;
+        margin-top: 2em;
+        padding-top: 2em - $line-height-base/2;
+    }
+    /* Space out the masthead */
+    .header {
+        margin-bottom: 2em;
+    }
+    /* Remove the bottom border on the jumbotron for visual effect */
+    .jumbotron {
+        border-bottom: 0;
+    }
 }
