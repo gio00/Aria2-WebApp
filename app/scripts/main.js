@@ -70,7 +70,7 @@ new Vue({
         },
         checkCookie:function(){
           var host = this.getCookie('host');
-           if (host!='') {
+           if (host != '') {
              this.settings['host'] = host;
            }
          },
@@ -108,13 +108,15 @@ new Vue({
             }
         },
         relaodAria: function() {
+            var self = this;
             this.active=[];
             this.waiting=[];
             this.stopped=[];
+
             this.connected = false;
             this.aria2 = new Aria2(this.settings);
-            var self = this;
             this.setCookie('host', this.settings['host'], 100);
+
             this.aria2.open(function() {
                 self.aria2.getGlobalOption(function(err, res) {
                     self.options = res;
