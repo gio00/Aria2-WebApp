@@ -96,7 +96,7 @@ new Vue({
                 var urls = this.urlfield.split(' ');
                 if (!this.toggle) {
                     for (var i = 0; i < urls.length; i++) {
-                        aria2.addUri([urls[i]], self.callback);
+                        self.aria2.addUri([urls[i]], self.callback);
                     }
                 }
             }
