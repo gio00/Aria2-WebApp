@@ -97,7 +97,7 @@ new Vue({
         downloadAll: function(){
             var self = this;
             if(this.torrent != ""){
-                aria2.addTorrent(self.torrent, self.callback);
+                self.aria2.addTorrent(self.torrent, self.callback);
             }else{
                 var urls = this.urlfield.split(' ')
                 if(!this.toggle){
