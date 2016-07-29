@@ -112,10 +112,13 @@
             <div class="row" v-else>
                 <div v-for="d in all | orderBy 'status'"  transition="item" class="element border-{{ classByStatus(d) }}">
                     <div class=row>
-                        <div class="col-md-11">
+                        <div class="col-xs-10 col-md-11">
 
-                            <h4 v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</h4>
-                            <h4 v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</h4>
+                            <h4 style="overflow:auto;text-overflow:ellipsis;">
+                                <template v-if="d.hasOwnProperty('bittorrent') &&  d.bittorrent.hasOwnProperty('info')">{{ d.bittorrent.info.name }}</template>
+                                <template v-else>{{ (d.files[0].path.split('/'))[d.files[0].path.split('/').length - 1] }}</template>
+                            </h4>
+                            
 
                             <div class="progress">
                                 <div class="progress-bar progress-bar-striped progress-bar-{{ classByStatus(d) }}" role="progressbar" :aria-valuenow="(d.totalLength == 0 ) ? 100 : d.completedLength" aria-valuemin="0" :aria-valuemax="(d.totalLength == 0 ) ? 100 : d.totalLength" :style="{ width: ((d.totalLength == 0 ) ? 100 : d.completedLength / d.totalLength * 100) +'%'}">
