@@ -19,8 +19,7 @@ npm install
 bower install
 ```
 
-Complete build with
+build with
 ```
 gulp
-gulp generate-favicon
 ```
